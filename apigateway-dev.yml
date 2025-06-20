@@ -12,29 +12,22 @@ spring:
           # car le nom des services est en minuscule dans l'URL
       # Configuration des routes de l'API Gateway
       routes:
-        #Service CLIENTS-SERVICE
-        - id: client-service
-          uri: lb://CLIENTSSERVICE/ #Attention : lb et pas HTTP. Lb est prêt pour faire du load-balancing
+        #Service VEHICULES-SERVICE
+        - id: vehicule-service
+          uri: lb://VEHICULESSERVICE/ #Attention : lb et pas HTTP. Lb est prêt pour faire du load-balancing
           predicates:
             # On matche tout ce qui commence par /api/clients
-            - Path=/api/clients/**
+            - Path=/api/vehicules/**
           filters:
             # On va réécrire l'URL pour enlever le /api/client
-            - RewritePath=/api/clients(?<segment>/?.*), /$\{segment}
-        #Service COMPTES-SERVICE
-        - id: comptes-service
-          uri: lb://COMPTESSERVICE/
+            - RewritePath=/api/vehicules(?<segment>/?.*), /$\{segment}
+        #Service STATIONS-SERVICE
+        - id: stations-service
+          uri: lb://STATIONSSERVICE/
           predicates:
-            - Path=/api/comptes/**
+            - Path=/api/stations/**
           filters:
-            - RewritePath=/api/comptes(?<segment>/?.*), /$\{segment}
-        #Service CLIENTS-COMPTES
-        - id: clients-comptes
-          uri: lb://CLIENTSCOMPTES/
-          predicates:
-            - Path=/api/clientscomptes/**
-          filters:
-            - RewritePath=/api/clientscomptes(?<segment>/?.*), /$\{segment}
+            - RewritePath=/api/stations(?<segment>/?.*), /$\{segment}
       enabled: on # Activation gateway
     # Activation remontée management dans Eureka
     config:
@@ -56,7 +49,7 @@ management:
       # SANS DOCKER COMPOSE
       # endpoint: http://localhost:9411/api/v2/spans
       # AVEC DOCKER COMPOSE
-      endpoint: http://bnkzipkin:9411/api/v2/spans
+      endpoint: http://evmiagezipkin:9411/api/v2/spans
   tracing:
     sampling:
       probability: 1
@@ -68,7 +61,7 @@ eureka:
         # SANS DOCKER COMPOSE
         # defaultZone: http://localhost:10001/eureka/ # url d'accès à l'annuaire
         # AVEC DOCKER COMPOSE
-        defaultZone: http://bnkannuaire:10001/eureka/ # url d'accès à l'annuaire
+        defaultZone: http://evmiageannuaire:10001/eureka/ # url d'accès à l'annuaire
 
   instance:
     metadata-map:

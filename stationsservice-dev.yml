@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: stationsservice   # nom de l'application
+    # Activation remontée management dans Eureka
+    config:
+      service-registry:
+        auto-registration:
+          register-management: on
+  data:
+    mongodb:
+      # SANS DOCKER COMPOSE
+      #uri: mongodb://localhost:27017/banquebd
+      # AVEC DOCKER COMPOSE
+      uri: mongodb://evmiagemongo:27017/evmiagebd
+      username: root
+      password: root
+
+# Activation des endpoints pour le monitoring
+management:
+  metrics:
+    mongo:
+      command:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          env,health,
+          info,metrics,
+          loggers,mappings, prometheus
+  # configuration lien vers serveur Zipkin
+  zipkin:
+    tracing:
+      # SANS DOCKER COMPOSE
+      #endpoint: http://localhost:9411/api/v2/spans
+      # AVEC DOCKER COMPOSE
+      endpoint: http://evmiagezipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1
+# Configuration client de l'annuaire
+# Le serveur stations va s'enregistrer comme un micro-service sur l'annuaire
+eureka:
+  client:
+    service-url:
+        # SANS DOCKER COMPOSE
+        #defaultZone: http://localhost:10001/eureka/ # url d'accès à l'annuaire
+        # AVEC DOCKER COMPOSE
+        defaultZone: http://evmiageannuaire:10001/eureka/ # url d'accès à l'annuaire
+  # Ajout métadonnée dans Eureka pour que Prometheus puisse déterminer le chemin vers les métriques
+  instance:
+    metadata-map:
+      prometheus.scrape: "true"
+      prometheus.path: "/actuator/prometheus"
+      prometheus.port: "${management.server.port}"
+      #  instance:
+      #    metadataMap:
+      # on va surcharger le nom de l'application si plusieurs instances de station ont même IP et même port
+      # on surcharge par une valeur random si le nom de l'instance existe déjà.
+#      instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+# Configuration du log.
+logging:
+  level:
+    org.springframework.web: INFO # Choix du niveau de log affiché
+
+# Proprietes du serveur d'entreprise
+server:
+  port: 10021   # HTTP (Tomcat) port
