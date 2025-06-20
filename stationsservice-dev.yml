@@ -11,9 +11,10 @@ spring:
       # SANS DOCKER COMPOSE
       #uri: mongodb://localhost:27017/banquebd
       # AVEC DOCKER COMPOSE
-      uri: mongodb://evmiagemongo:27017/evmiagebd
-      username: root
-      password: root
+      uri: mongodb://root:root@evmiagemongo:27017/evmiagebd?authSource=admin
+      #uri: mongodb://evmiagemongo:27017/evmiagebd
+      #username: root
+      #password: root
 
 # Activation des endpoints pour le monitoring
 management:
